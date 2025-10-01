@@ -66,9 +66,7 @@ std::shared_ptr<sound_trigger_hw_device> SoundTriggerDevice::device_ = nullptr;
 #include <hidl/HidlTransportSupport.h>
 #include <hidl/LegacySupport.h>
 
-#include <lsm_server_wrapper.h>
-
-#include <vendor/qti/hardware/ListenSoundModel/1.0/IListenSoundModel.h>
+#include "ListenSoundModelShim.h"
 using vendor::qti::hardware::ListenSoundModel::V1_0::IListenSoundModel;
 using vendor::qti::hardware::ListenSoundModel::V1_0::implementation::ListenSoundModel;
 using android::hardware::defaultPassthroughServiceImplementation;
@@ -459,8 +457,10 @@ int SoundTriggerDevice::Init(hw_device_t **device, const hw_module_t *module)
 
 #ifdef LSM_HIDL_ENABLED
     /* Register LSM Lib HIDL service */
+    ::android::hardware::configureRpcThreadpool(4, false);
+
     STHAL_DBG(LOG_TAG, "Register LSM HIDL service");
-    sp<IListenSoundModel> service = new ListenSoundModel();
+    sp<IListenSoundModel> service = ListenSoundModel::new_ListenSoundModel();
     if(android::OK !=  service->registerAsService())
         STHAL_WARN(LOG_TAG, "Could not register LSM HIDL service");
 #endif

@@ -1,4 +1,8 @@
 soong_namespace {
+    imports: [
+        "hardware/qcom-caf/sm8550",
+        "vendor/sony/sm8550-common",
+    ],
 }
 
 soong_config_module_type {
